@@ -1,10 +1,10 @@
 function Task({task}) {
   return <>
     <div className='task'>
-    <div className='task-section-text'>
-      <h3>{task.details.title}</h3>
-      <p>{task.details.description}</p>
-    </div>
+      <div className='task-section-text'>
+        <h3>{task.details.title}</h3>
+        <p>{task.details.description}</p>
+      </div>
       <div className='task-section-properties'>
         <div className='icon-section'>
           <div className='icon-div'>
