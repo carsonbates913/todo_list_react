@@ -1,0 +1,29 @@
+.home-header {
+  margin: 0 0 20px 0;
+  padding: 20px 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.header-welcome {
+  margin: 0 0 0 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.header-date{
+  font-family: forma-djr-display, sans-serif;
+  font-size: 100px;
+  background: linear-gradient(pink 5%, blue 110%);
+  background-clip: text;
+  color: transparent;
+}
+
+.header-time {
+  align-self: flex-end;
+  transform: translateX(-50px);
+  font-size: 38px;
+}
