@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { DispatchTasksContext } from '../data/TaskContent.jsx'
 
 function TaskModal({onClose}) {
   const [title, setTitle] = useState('');
@@ -9,13 +10,28 @@ function TaskModal({onClose}) {
   const [tag, setTag] = useState('');
   const [errors, setErrors] = useState({});
 
+  const dispatch = useContext(DispatchTasksContext);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = validateForm();
     setErrors(validationErrors); 
     if(Object.keys(validationErrors).length === 0){
+      dispatch({
+        type: 'added',
+        task: {
+          id: 1,
+          details: {
+            title: title,
+            description: description,
+            dueDate: dueDate,
+            workTime: workTime,
+            progress: progress,
+            tag: tag,
+          }
+        }
+      })
       clearInputs();
-      console.log('hello');
       onClose();
     }
   };
@@ -38,9 +54,9 @@ function TaskModal({onClose}) {
     return newErrors;
   }
 
-     /*Form Data*/
-     const tagOptions = [ 'Academics', 'Work', 'Health', 'Personal', 'Chore'];
-     const progressOptions = [ 'Not Started', 'Starting', 'Halfway', 'Almost', 'Complete'];
+  /*Form Data*/
+  const tagOptions = [ 'Academics', 'Work', 'Health', 'Personal', 'Chore'];
+  const progressOptions = [ 'Not Started', 'Starting', 'Halfway', 'Almost', 'Complete'];
 
   return <>
     <div className='task-modal'>

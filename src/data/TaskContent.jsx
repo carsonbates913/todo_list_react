@@ -9,7 +9,7 @@ export function TaskProvider({children}){
   return <>
     <TasksContext.Provider value={tasks}>
       <DispatchTasksContext.Provider value={dispatch}>
-      {children}
+         {children}
       </DispatchTasksContext.Provider>
     </TasksContext.Provider>
   </>
@@ -21,8 +21,8 @@ function tasksReducer(tasks, action){
       return [
         ...tasks, 
         {
-          details: action.details,
-          id: action.id
+          details: action.task.details,
+          id: action.task.id
         }
       ]
     }
@@ -41,8 +41,10 @@ function tasksReducer(tasks, action){
   }
 } 
 
-const initialTasks = [
-  {id: 1, details: {
+let initialTasks = [
+  {
+    id: 1, 
+    details: {
     title: 'task',
     description: '',
     dueDate: '',
