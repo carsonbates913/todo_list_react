@@ -25,7 +25,7 @@ function App() {
       setActivePopup(popupId);
       anchorElement.current = event.currentTarget;
       const rect = anchorElement.current.getBoundingClientRect();
-      setPopupPosition({top: rect.top, left: rect.left})
+      setPopupPosition({top: rect.bottom + 0, left: rect.right - (rect.width/2)})
     }
   }
 
@@ -46,9 +46,9 @@ function App() {
       </header>
       <div className='home-content'>
         <div className='task-section container-scroll'>
-          <h3 className="task-section-body" onClick={(event)=>{togglePopup(event, 'task-options')}}>Tasks</h3>
+          <h3 className="task-section-body" >Tasks</h3>
           <div className="task-container">
-          <TaskList handleToggle={(event)=>{togglePopup(event, 'task-options')}}></TaskList>
+          <TaskList isPopup={activePopup}handleToggle={(event)=>{togglePopup(event, 'task-options')}}></TaskList>
           </div>
         </div>
         <div className="visual-section"></div>
@@ -56,7 +56,7 @@ function App() {
       </div>
       <div className='popup-container'>
         <Popup id='task-options' isOpen={activePopup==='task-options'} position={popupPosition} onClose={handleClosePopup}>
-          <TaskOptions></TaskOptions>
+          <TaskOptions onClose={handleClosePopup}></TaskOptions>
         </Popup>
       </div>
       </TaskProvider>

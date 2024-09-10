@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { DispatchTasksContext } from '../data/TaskContent.jsx'
+import { DispatchTasksContext, TaskIdContext } from '../data/TaskContent.jsx'
 
 function TaskModal({onClose}) {
   const [title, setTitle] = useState('');
@@ -11,6 +11,7 @@ function TaskModal({onClose}) {
   const [errors, setErrors] = useState({});
 
   const dispatch = useContext(DispatchTasksContext);
+  const {idCounter, setIdCounter} = useContext(TaskIdContext);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -20,7 +21,7 @@ function TaskModal({onClose}) {
       dispatch({
         type: 'added',
         task: {
-          id: 1,
+          id: idCounter,
           details: {
             title: title,
             description: description,
@@ -31,6 +32,8 @@ function TaskModal({onClose}) {
           }
         }
       })
+      setIdCounter(idCounter + 1);
+      console.log(idCounter);
       clearInputs();
       onClose();
     }
