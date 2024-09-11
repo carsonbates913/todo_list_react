@@ -7,7 +7,6 @@ function Popup({isOpen, position, onClose, children}) {
   useLayoutEffect(()=> {
     if(position && isOpen){
       adjustLocation();
-      console.log(position);
     }
   }, [position]);
 
@@ -19,11 +18,9 @@ function Popup({isOpen, position, onClose, children}) {
         onClose();
       }
     }
-    console.log('heelo');
     document.addEventListener('click', handleClickOutside);
 
     return () => {
-      console.log('byye');
       document.removeEventListener('click', handleClickOutside);
     }
   }, [isOpen]);

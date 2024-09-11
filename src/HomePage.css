@@ -526,6 +526,7 @@ select {
   height: 100vh;
   visibility: hidden;
   transition: visibility 0.5s;
+  z-index: 498;
 }
 
 .nav-active.container-side-nav {

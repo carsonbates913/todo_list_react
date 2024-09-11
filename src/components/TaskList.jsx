@@ -7,26 +7,26 @@ function TaskList({isPopup, handleToggle}){
   const {activeTask, setActiveTask} = useContext(ActiveTaskContext);
 
   useEffect(()=> {
-    console.log('effect activated');
+    console.log('active task checker activate')
     if(!activeTask){
-      console.log(activeTask);
-      console.log('active cancel');
+      console.log('no active task so cancel');
       return;
     }
     if(!isPopup){
-      console.log(activeTask);
-      console.log('unfreeze');
+      console.log('remove active task');
       setActiveTask(null);
     }
 
   }, [isPopup, activeTask])
 
   return <>
-    {tasks.map((task) =>{
-      return <Task active={activeTask===task.id} key={task.id} task={task} handleTaskOptions={(event) => {handleToggle(event);
-        setActiveTask(task.id);
-      }}></Task>
-    })}
+    <div className={`task-container ${activeTask ? 'no-hover' : ''}`}>
+      {tasks.map((task) =>{
+       return <Task active={activeTask===task.id} key={task.id} task={task} handleTaskOptions={(event) => {handleToggle(event);
+          setActiveTask(task.id);
+        }}></Task>
+     })}
+    </div>
   </>
 }
 

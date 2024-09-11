@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
-import { DispatchTasksContext, TaskIdContext } from '../data/TaskContent.jsx'
+import { DispatchTasksContext, TaskIdContext, TasksContext, ActiveTaskContext } from '../data/TaskContent.jsx'
 
-function TaskModal({onClose}) {
+function TaskModal({isActive, onClose}) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -10,30 +10,66 @@ function TaskModal({onClose}) {
   const [tag, setTag] = useState('');
   const [errors, setErrors] = useState({});
 
+  const [editingTaskId, setEditingTaskId] = useState(null);
+
+  const tasks = useContext(TasksContext)
   const dispatch = useContext(DispatchTasksContext);
+  const {activeTask, setActiveTask}= useContext(ActiveTaskContext)
   const {idCounter, setIdCounter} = useContext(TaskIdContext);
+
+  useEffect(()=>{
+    if(activeTask){
+      const editTask = tasks.find(task => task.id === activeTask);
+      setTitle(editTask.details.title);
+      setDescription(editTask.details.description);
+      setDueDate(editTask.details.dueDate);
+      setWorkTime(editTask.details.workTime);
+      setProgress(editTask.details.progress);
+      setTag(editTask.details.tag);
+      setEditingTaskId(activeTask); 
+    }
+  }, [isActive, activeTask])
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const validationErrors = validateForm();
     setErrors(validationErrors); 
     if(Object.keys(validationErrors).length === 0){
-      dispatch({
-        type: 'added',
-        task: {
-          id: idCounter,
-          details: {
-            title: title,
-            description: description,
-            dueDate: dueDate,
-            workTime: workTime,
-            progress: progress,
-            tag: tag,
+      if(!editingTaskId){
+        dispatch({
+          type: 'added',
+          task: {
+            id: idCounter,
+            details: {
+              title: title,
+              description: description,
+              dueDate: dueDate,
+              workTime: workTime,
+              progress: progress,
+              tag: tag,
+            }
           }
-        }
-      })
-      setIdCounter(idCounter + 1);
-      console.log(idCounter);
+        })
+        setIdCounter(idCounter + 1);
+      }else{
+        console.log('editing');
+        console.log(editingTaskId);
+        dispatch({
+          type: 'edited',
+          task: {
+            id: editingTaskId,
+            details: {
+              title: title,
+              description: description,
+              dueDate: dueDate,
+              workTime: workTime,
+              progress: progress,
+              tag: tag,
+            }
+          }
+        })
+        setEditingTaskId(null);
+      }
       clearInputs();
       onClose();
     }
@@ -61,6 +97,9 @@ function TaskModal({onClose}) {
   const tagOptions = [ 'Academics', 'Work', 'Health', 'Personal', 'Chore'];
   const progressOptions = [ 'Not Started', 'Starting', 'Halfway', 'Almost', 'Complete'];
 
+  if(!isActive){
+    return null;
+  }else{
   return <>
     <div className='task-modal'>
       <form className='create-task-form' onSubmit={handleSubmit} noValidate>
@@ -123,17 +162,26 @@ function TaskModal({onClose}) {
             />
           <button className='submit-button' type='submit'>Submit</button>
         </div>
-        <button className='cancel-button' type='button' onClick={onClose}>X</button>
+        <button className='cancel-button' type='button' onClick={()=>{
+          clearInputs()
+          onClose()}}>X</button>
       </form>
     </div>
   </>
+  }
 }
 
 function FormField({inputId, labelText, inputType, hasToggle = false, selectorOptions = [], isRequired = false, value, handleChange, error}) {
-  const [isVisible, setIsVisible] = useState(!hasToggle);
+  const [isVisible, setIsVisible] = useState(null);
+
   const handleOnToggle = (event) => {
     setIsVisible(event.target.checked);
   }
+
+  useEffect(()=>{
+    setIsVisible(!!value);
+  }, [value])
+
 
   const renderInputElement = () => {
     switch (inputType) {
@@ -143,9 +191,9 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
             id={inputId} 
             name={inputId}
             required={isRequired}
-            style={{display: isVisible ? 'inline-block' : 'none'}}
-            value={value}
+            style= {{display: !hasToggle ? 'inline-block' : (isVisible ? 'inline-block' : 'none')}}
             onChange={handleChange}
+            defaultValue={value}
           >
             <option value='' disabled hidden/>
             {selectorOptions.map(option=> (
@@ -159,7 +207,7 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
             id={inputId} 
             name={inputId}
             required={isRequired}
-            style={{display: isVisible ? 'inline-block' : 'none'}}
+            style= {{display: !hasToggle ? 'inline-block' : (isVisible ? 'inline-block' : 'none')}}
             value={value}
             onChange={handleChange}
           />);
@@ -170,7 +218,7 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
             id={inputId} 
             name={inputId}
             required={isRequired}
-            style={{display: isVisible ? 'inline-block' : 'none'}}
+            style= {{display: !hasToggle ? 'inline-block' : (isVisible ? 'inline-block' : 'none')}}
             value={value}
             onChange={handleChange}
           />);
@@ -185,7 +233,7 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
         {renderInputElement()}
         {hasToggle && (
           <label className='toggle-button' htmlFor={`${inputId}-checker`}>
-            <input type='checkbox' id={`${inputId}-checker`} onChange={handleOnToggle}/>
+            <input type='checkbox' id={`${inputId}-checker`} onChange={handleOnToggle} checked={isVisible}/>
           </label>
         )}
       </div>

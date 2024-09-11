@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import { DispatchTasksContext } from '../data/TaskContent.jsx'
 
 function Task({active, task, handleTaskOptions}) {
-  const dispatch = useContext
+  const dispatch = useContext(DispatchTasksContext);
 
   return <>
     <div className={`task ${active ? 'freeze' : ''}`}>

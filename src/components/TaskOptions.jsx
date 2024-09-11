@@ -1,13 +1,14 @@
 import { useContext } from 'react'
 import { DispatchTasksContext, ActiveTaskContext } from '../data/TaskContent.jsx'
 
-function TaskOptions({onClose}) {
+function TaskOptions({onClose, onEdit}) {
 
   const dispatch = useContext(DispatchTasksContext)
   const {activeTask, setActiveTask} = useContext(ActiveTaskContext);
 
   const handleEdit = () => {
-    console.log('edit');
+    onEdit(true);
+    onClose();
   }
 
   const handleDelete = (taskId) => {
