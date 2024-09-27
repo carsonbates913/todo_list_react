@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import { DispatchTasksContext, TaskIdContext, TasksContext, ActiveTaskContext } from '../data/TaskContent.jsx'
 
-function TaskModal({isActive, onClose}) {
+function TaskModal({isEditing, handleEditing, isActive, onClose}) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -18,7 +18,9 @@ function TaskModal({isActive, onClose}) {
   const {idCounter, setIdCounter} = useContext(TaskIdContext);
 
   useEffect(()=>{
-    if(activeTask){
+    console.log('task modal use Effect');
+    if(isEditing && activeTask){
+      console.log(activeTask);
       const editTask = tasks.find(task => task.id === activeTask);
       setTitle(editTask.details.title);
       setDescription(editTask.details.description);
@@ -69,6 +71,7 @@ function TaskModal({isActive, onClose}) {
           }
         })
         setEditingTaskId(null);
+        handleEditing();
       }
       clearInputs();
       onClose();
@@ -111,7 +114,7 @@ function TaskModal({isActive, onClose}) {
             inputType='text'
             isRequired={true}
             value={title}
-            handleChange={(e)=>setTitle(e.target.value)}
+            handleChange={(value)=>setTitle(value)}
             error={errors.title}
           />
           <FormField 
@@ -119,7 +122,7 @@ function TaskModal({isActive, onClose}) {
             labelText='Description'
             inputType='textarea'
             value={description}
-            handleChange={(e)=>setDescription(e.target.value)}
+            handleChange={(value)=>setDescription(value)}
             error={errors.description}
           />
         </div>
@@ -130,7 +133,7 @@ function TaskModal({isActive, onClose}) {
             inputType='date'
             hasToggle={true}
             value={dueDate}
-            handleChange={(e)=>setDueDate(e.target.value)}
+            handleChange={(value)=>setDueDate(value)}
             error={errors.dueDate}
           />
           <FormField 
@@ -139,7 +142,7 @@ function TaskModal({isActive, onClose}) {
             inputType='time'
             hasToggle={true}
             value={workTime}
-            handleChange={(e)=>setWorkTime(e.target.value)}
+            handleChange={(value)=>setWorkTime(value)}
             error={errors.workTime}
           />
           <FormField 
@@ -148,7 +151,7 @@ function TaskModal({isActive, onClose}) {
             inputType='select'
             selectorOptions={progressOptions}
             value={progress}
-            handleChange={(e)=>setProgress(e.target.value)}
+            handleChange={(value)=>setProgress(value)}
             error={errors.progress}
           />
           <FormField 
@@ -157,14 +160,13 @@ function TaskModal({isActive, onClose}) {
             inputType='select'
             selectorOptions={tagOptions}
             value={tag}
-            handleChange={(e)=>setTag(e.target.value)}
+            handleChange={(value)=>setTag(value)}
             error={errors.tag}
             />
           <button className='submit-button' type='submit'>Submit</button>
         </div>
         <button className='cancel-button' type='button' onClick={()=>{
-          clearInputs()
-          onClose()}}>X</button>
+          clearInputs();handleEditing();onClose();}}>X</button>
       </form>
     </div>
   </>
@@ -175,6 +177,9 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
   const [isVisible, setIsVisible] = useState(null);
 
   const handleOnToggle = (event) => {
+    if(event.target.checked){
+      handleChange('');
+    }
     setIsVisible(event.target.checked);
   }
 
@@ -192,7 +197,7 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
             name={inputId}
             required={isRequired}
             style= {{display: !hasToggle ? 'inline-block' : (isVisible ? 'inline-block' : 'none')}}
-            onChange={handleChange}
+            onChange={(e)=>{handleChange(e.target.value)}}
             defaultValue={value}
           >
             <option value='' disabled hidden/>
@@ -209,7 +214,7 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
             required={isRequired}
             style= {{display: !hasToggle ? 'inline-block' : (isVisible ? 'inline-block' : 'none')}}
             value={value}
-            onChange={handleChange}
+            onChange={(e)=>{handleChange(e.target.value)}}
           />);
       default: 
         return (
@@ -220,7 +225,7 @@ function FormField({inputId, labelText, inputType, hasToggle = false, selectorOp
             required={isRequired}
             style= {{display: !hasToggle ? 'inline-block' : (isVisible ? 'inline-block' : 'none')}}
             value={value}
-            onChange={handleChange}
+            onChange={(e)=>{handleChange(e.target.value)}}
           />);
     }
   }
